@@ -1,0 +1,41 @@
+wd = os.getcwd()
+dir_cache_path = os.path.join(wd, "cache")
+datazip_path = os.path.join(wd, "data.zip")
+
+
+def clean_cache():
+    if not os.path.exists(dir_cache_path):
+        os.makedirs(dir_cache_path)
+    else:
+        shutil.rmtree(dir_cache_path)
+        os.makedirs(dir_cache_path)
+
+
+def cache_zip(datazip_path, dir_cache_path):
+    with ZipFile(datazip_path, "r") as a:
+        a.extractall(dir_cache_path)
+        return dir_cache_path
+
+
+
+def cached_files():
+    dir_path = os.path.abspath(dir_cache_path)
+    return [os.path.join(dir_path, file) for file in os.listdir(dir_path)]
+
+
+def find_password(cached_files):
+    for file in cached_files:
+        with open(file) as a:
+            for line in a:
+                if 'password' in line:
+                    split = line.split()
+                    final = [x for x in split if 'password' in x]
+                    return final
+
+
+if __name__ == "__main__":
+    print([x for x in os.listdir() if os.path.isdir(x)])
+    clean_cache()
+    cache_zip(datazip_path, dir_cache_path)
+    cached_files()
+    # find_password(cached_files())
